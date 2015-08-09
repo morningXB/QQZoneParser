@@ -12,9 +12,9 @@ public class QZoneParser {
 	public static void main(String[] args) throws Exception{
 		CrawlProcessUtils crawlProcessUtils = new CrawlProcessUtils();
 		ArrayList<Message> messages =  crawlProcessUtils.getCurrentPageMsgs(0);
-//		for(int i =0;i<messages.size();i++){
-//			System.out.println(messages.get(i));
-//		}		
+	for(int i =0;i<messages.size();i++){
+		System.out.println(messages.get(i).getPubtime());
+	}		
 		FileProcessUtils fileProcessUtils = new FileProcessUtils();
 		//ArrayList<Long> uins = fileProcessUtils.findAllReplyer(messages);
 	//	System.out.println(uins);
