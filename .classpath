@@ -4,5 +4,22 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/HttpClient4.5"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Json"/>
+	<classpathentry kind="lib" path="lib/jre/httpClient4.5/commons-codec-1.9.jar"/>
+	<classpathentry kind="lib" path="lib/jre/httpClient4.5/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/jre/httpClient4.5/fluent-hc-4.5.jar"/>
+	<classpathentry kind="lib" path="lib/jre/httpClient4.5/httpclient-4.5.jar"/>
+	<classpathentry kind="lib" path="lib/jre/httpClient4.5/httpclient-cache-4.5.jar"/>
+	<classpathentry kind="lib" path="lib/jre/httpClient4.5/httpclient-win-4.5.jar"/>
+	<classpathentry kind="lib" path="lib/jre/httpClient4.5/httpcore-4.4.1.jar"/>
+	<classpathentry kind="lib" path="lib/jre/httpClient4.5/httpmime-4.5.jar"/>
+	<classpathentry kind="lib" path="lib/jre/httpClient4.5/jna-4.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/jre/httpClient4.5/jna-platform-4.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/jre/json/gson-2.2.4.jar"/>
+	<classpathentry kind="lib" path="lib/jre/json/jackson-annotations-2.3.4.jar"/>
+	<classpathentry kind="lib" path="lib/jre/json/jackson-core-2.3.4.jar"/>
+	<classpathentry kind="lib" path="lib/jre/json/jackson-core-asl-1.8.4.jar"/>
+	<classpathentry kind="lib" path="lib/jre/json/jackson-databind-2.3.4.jar"/>
+	<classpathentry kind="lib" path="lib/jre/json/jackson-mapper-asl-1.8.5.jar"/>
+	<classpathentry kind="lib" path="lib/jre/json/json-lib-2.2.3-jdk15.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

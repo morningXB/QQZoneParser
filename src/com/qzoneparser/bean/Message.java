@@ -9,7 +9,7 @@ public class Message {
 	private int secret;
 	private String pasterid;
 	private String bmp;
-	private Date pubtime;
+	private String pubtime;
 	private int modifytime;
 	private long effect;
 	private int type;
@@ -18,7 +18,8 @@ public class Message {
 	private int capacity;
 	private String htmlContent;
 	private String ubbContent;
-	private String signatrue;
+	private String signature;
+	private ArrayList<Reply> replyList=new ArrayList<Reply>();
 	@Override
 	public String toString() {
 		return "Message [id=" + id + ", secret=" + secret + ", pasterid="
@@ -26,10 +27,10 @@ public class Message {
 				+ ", modifytime=" + modifytime + ", effect=" + effect
 				+ ", type=" + type + ", uin=" + uin + ", nickname=" + nickname
 				+ ", capacity=" + capacity + ", htmlContent=" + htmlContent
-				+ ", ubbContent=" + ubbContent + ", signatrue=" + signatrue
+				+ ", ubbContent=" + ubbContent + ", signatrue=" + signature
 				+ ", replyList=" + replyList + "]";
 	}
-	private ArrayList<Message> replyList=new ArrayList<Message>();
+	
 	public String getId() {
 		return id;
 	}
@@ -54,10 +55,10 @@ public class Message {
 	public void setBmp(String bmp) {
 		this.bmp = bmp;
 	}
-	public Date getPubtime() {
+	public String getPubtime() {
 		return pubtime;
 	}
-	public void setPubtime(Date pubtime) {
+	public void setPubtime(String pubtime) {
 		this.pubtime = pubtime;
 	}
 	public int getModifytime() {
@@ -108,16 +109,16 @@ public class Message {
 	public void setUbbContent(String ubbContent) {
 		this.ubbContent = ubbContent;
 	}
-	public String getSignatrue() {
-		return signatrue;
+	public String getSignature() {
+		return signature;
 	}
-	public void setSignatrue(String signatrue) {
-		this.signatrue = signatrue;
+	public void setSignature(String signature) {
+		this.signature = signature;
 	}
-	public ArrayList<Message> getReplyList() {
+	public ArrayList<Reply> getReplyList() {
 		return replyList;
 	}
-	public void setReplyList(ArrayList<Message> replyList) {
+	public void setReplyList(ArrayList<Reply> replyList) {
 		this.replyList = replyList;
 	}
 }

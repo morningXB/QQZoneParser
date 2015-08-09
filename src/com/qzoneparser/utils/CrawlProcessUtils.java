@@ -1,11 +1,9 @@
 package com.qzoneparser.utils;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -13,11 +11,13 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qzoneparser.bean.Message;
 import com.qzoneparser.config.Constants;
 
 public class CrawlProcessUtils {
+	static ObjectMapper map=new ObjectMapper();
 	public ArrayList<Message> getCurrentPageMsgs(int startPage) throws Exception{
 		StringBuilder url=new StringBuilder();
 		url.append(Constants.PREFIX_URL);
@@ -39,9 +39,13 @@ public class CrawlProcessUtils {
 		String str=EntityUtils.toString(entity);
 		String content=str.substring(0, str.length()-5).substring(str.indexOf("commentList")+"commentList\":".length());
 		ArrayList<Message> msgs=new ArrayList<Message>();
-		ObjectMapper map=new ObjectMapper();
-		msgs=map.readValue(content, ArrayList.class);
+		JavaType type =getCollectionType(ArrayList.class, Message.class);
+		msgs=map.readValue(content, type);
 		EntityUtils.consume(entity);
 		return msgs;
 	}
+	public static JavaType getCollectionType(Class<?> collectionClass, Class<?>... elementClasses) {   
+		return map.getTypeFactory().constructParametricType(collectionClass, elementClasses);   
+    }   
+
 }
