@@ -13,10 +13,12 @@ import java.util.Date;
 import org.ietf.jgss.Oid;
 
 import com.qzoneparser.bean.Message;
+import com.qzoneparser.bean.Reply;
+import com.qzoneparser.config.Constants;
 
 public class FileProcessUtils {
 
-	public int getAllCount(ArrayList<Message> messages) {
+	public static int getAllCount(ArrayList<Message> messages) {
 		return messages.size();
 	}
 
@@ -25,7 +27,7 @@ public class FileProcessUtils {
 	 * @param uin留言人的qq号
 	 * @return 返回留言的次数
 	 */
-	public int gettimesByUin(String uin, ArrayList<Message> messages) {
+	public static int gettimesByUin(String uin, ArrayList<Message> messages) {
 		int count = 0;
 		if (uin != null) {
 			for (int i = 0; i < messages.size(); i++) {
@@ -43,7 +45,7 @@ public class FileProcessUtils {
 	 *            留言人的昵称
 	 * @return 次数
 	 */
-	public int gettimeByNickname(String nickname, ArrayList<Message> messages) {
+	public static int gettimeByNickname(String nickname, ArrayList<Message> messages) {
 		int count = 0;
 		if (nickname != null) {
 			for (int i = 0; i < messages.size(); i++) {
@@ -62,7 +64,7 @@ public class FileProcessUtils {
 	 *            检索内容
 	 * @return
 	 */
-	public ArrayList<Message> findSimilarBean(String content,
+	public static ArrayList<Message> findSimilarBean(String content,
 			ArrayList<Message> messages) {
 		ArrayList<Message> result = new ArrayList<Message>();
 		if (content != null && !"".equals(content.trim())) {
@@ -81,7 +83,7 @@ public class FileProcessUtils {
 	 * @param messages
 	 * @return
 	 */
-	public ArrayList<Long> findAllReplyer(ArrayList<Message> messages) {
+	public static ArrayList<Long> findAllReplyer(ArrayList<Message> messages) {
 		ArrayList<Long> uins = new ArrayList<Long>();
 		for (int i = 0; i < messages.size(); i++) {
 			if (!uins.contains(messages.get(i).getUin())) {
@@ -90,8 +92,9 @@ public class FileProcessUtils {
 		}
 		return uins;
 	}
+	
 
-	public ArrayList<Message> getAllMessagesByUin(ArrayList<Message> messages,
+	public static ArrayList<Message> getAllMessagesByNickName(ArrayList<Message> messages,
 			Long uin) {
 		ArrayList<Message> specialmessages = new ArrayList<Message>();
 		for (int i = 0; i < messages.size(); i++) {
@@ -109,18 +112,18 @@ public class FileProcessUtils {
 	 *            所有留言
 	 * @return 亲密得分
 	 */
-	public double firstAnalysis(ArrayList<Message> messages, Long uin) {
-		ArrayList<Message> messagesfromone = getAllMessagesByUin(messages, uin);
+	public static double firstAnalysis(ArrayList<Message> messages, Long uin) {
+		ArrayList<Message> messagesfromone = getAllMessagesByNickName(messages, uin);
 		// 第一个项为留言的占百分比例 percentage
 		// 1-10分
-		double percentage = messagesfromone.size() / getAllCount(messages);
+		double percentage = messagesfromone.size() /(double)getAllCount(messages);
 		double score1 = percentage * 10;
-
 		// 第二项为最新留言与当前时间的比较
 		// 1-10
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 		String replytime = messagesfromone.get(0).getPubtime();// 最新的一条留言
+		//System.out.println(replytime);
 		Date current = null;
 		try {
 			current = format.parse(replytime);
@@ -131,8 +134,10 @@ public class FileProcessUtils {
 
 		// 第三项为最新留言与最早留言的比较
 		String latest = messagesfromone.get(0).getPubtime();
-		String oldest = messagesfromone.get(messagesfromone.size())
+		//System.out.println(latest);
+		String oldest = messagesfromone.get(messagesfromone.size() - 1)
 				.getPubtime();
+		//System.out.println(oldest);
 		Date latest_time = null;
 		Date oldest_time = null;
 		try {
@@ -142,21 +147,33 @@ public class FileProcessUtils {
 			e.printStackTrace();
 		}
 		double score3 = maxinternal(latest_time, oldest_time);
-		
-		//第四项为回复数量占比
-		
+
+		// 第四项为回复数量占比
 		double score4 = beReplied(messagesfromone);
-		
-		return 0;
+		System.out.println(score1*0.7 + " " + score2*0.05 + "  " + score3*0.05 + "  "
+				+ score4*0.2);
+		// 第五项为关键字检索加分
+		return score1 * 0.7 + score2 * 0.05 + score3 * 0.05 + score4 * 0.2;
 	}
+
 	/**
 	 * 根据回复的数量占比计算分数
+	 * 
 	 * @param messagesfromone
 	 * @return
 	 */
-	public double beReplied(ArrayList<Message> messagesfromone) {
-		
-		return 0;
+	public static double beReplied(ArrayList<Message> messagesfromone) {
+		double count = 0;
+		for (int i = 0; i < messagesfromone.size(); i++) {
+			ArrayList<Reply> replies = messagesfromone.get(i).getReplyList();
+			for (int j = 0; j < replies.size(); j++) {
+				if (replies.get(j).getUin().toString().equals(Constants.HOST_UIN)) {
+					count = count + 1;
+					break;
+				}
+			}
+		}
+		return count / (double)messagesfromone.size() * 10;
 	}
 
 	/**
@@ -166,20 +183,20 @@ public class FileProcessUtils {
 	 * @param oldest_time
 	 * @return
 	 */
+
 	@SuppressWarnings("deprecation")
-	public double maxinternal(Date latest_time, Date oldest_time) {
-		int days = 0;
+	public static double maxinternal(Date latest_time, Date oldest_time) {
+		double days = 0;
+		double year = latest_time.getYear() - oldest_time.getYear();
 		if (latest_time.compareTo(oldest_time) == 0) {// 第一次留言
 			return 1;
 		} else {
-			int year = latest_time.getYear() - oldest_time.getYear();
-			int month = latest_time.getMonth()-oldest_time.getMonth();
-			int day = latest_time.getDay()-oldest_time.getDate();
 			if (year > 2) {
 				return 10;
 			} else {
-				days = year*365+30*month+day;
-				return 1+days/3/365*9;
+				days = (latest_time.getTime()-oldest_time.getTime())/86400000;
+				double p = 1 + days / 3 / 365 * 9;
+				return p;
 			}
 		}
 	}
@@ -190,7 +207,7 @@ public class FileProcessUtils {
 	 * @param filePath
 	 * @return
 	 */
-	public String readTxtFile(String filePath) {
+	public  static String readTxtFile(String filePath) {
 		String result = "";
 		try {
 			// String encoding="GBK";
@@ -223,15 +240,15 @@ public class FileProcessUtils {
 	 * @param current
 	 * @return
 	 */
+
 	@SuppressWarnings("deprecation")
-	public double timeinternal(Date current) {
+	public static double timeinternal(Date current) {
 		Date now = new Date();
 		int year = now.getYear() - current.getYear();
-		if (year == 0) {
-			int month = now.getMonth() - current.getMonth();
-			int day = now.getDay() - current.getDay();
-			int days = 30 * month + day;
-			return 10 - days / 365 * 10;
+		if (year <= 2) {
+			double days = (now.getTime()-current.getTime())/86400000;
+			double p = 10 - (days / 365.0 / 3) * 10;
+			return p;
 		} else {
 			return 0;
 		}

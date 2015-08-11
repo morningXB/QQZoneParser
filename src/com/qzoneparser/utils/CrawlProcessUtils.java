@@ -18,7 +18,7 @@ import com.qzoneparser.config.Constants;
 
 public class CrawlProcessUtils {
 	static ObjectMapper map=new ObjectMapper();
-	public ArrayList<Message> getCurrentPageMsgs(int startPage) throws Exception{
+	public static ArrayList<Message> getCurrentPageMsgs(int startPage) throws Exception{
 		StringBuilder url=new StringBuilder();
 		url.append(Constants.PREFIX_URL);
 		url.append("uin=847496788&hostUin=");
@@ -31,7 +31,7 @@ public class CrawlProcessUtils {
 		CloseableHttpClient client=HttpClients.createDefault();
 		HttpGet get=new HttpGet();
 		get.setURI(URI.create(url.toString()));
-		RequestConfig config=RequestConfig.custom().setSocketTimeout(1000).setConnectTimeout(2000).build();
+		RequestConfig config=RequestConfig.custom().setSocketTimeout(50000).setConnectTimeout(50000).build();
 		get.setConfig(config);
 		
 		CloseableHttpResponse response=client.execute(get);
@@ -39,13 +39,30 @@ public class CrawlProcessUtils {
 		String str=EntityUtils.toString(entity);
 		String content=str.substring(0, str.length()-5).substring(str.indexOf("commentList")+"commentList\":".length());
 		ArrayList<Message> msgs=new ArrayList<Message>();
-		JavaType type =getCollectionType(ArrayList.class, Message.class);
-		msgs=map.readValue(content, type);
+		try{
+			JavaType type =getCollectionType(ArrayList.class, Message.class);
+			msgs=map.readValue(content,type);
+		}catch(Exception e){
+			System.out.println("亲，该QQ空间不对外开放，请先以可访问好友身份登陆~");
+			return null;
+		}
 		EntityUtils.consume(entity);
 		return msgs;
+
 	}
 	public static JavaType getCollectionType(Class<?> collectionClass, Class<?>... elementClasses) {   
 		return map.getTypeFactory().constructParametricType(collectionClass, elementClasses);   
     }   
+	
+	public static ArrayList<Message> getAllMsgs() throws Exception{
+		ArrayList<Message> msgs=new ArrayList<Message>();
+		for (int page=0;;page++){
+			ArrayList<Message> temp=getCurrentPageMsgs(page);
+			if (temp==null) {msgs=null;break;}
+			else if (temp.size()==0) break;
+			else msgs.addAll(temp);
+		}
+		return msgs;
+	}
 
 }

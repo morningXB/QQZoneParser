@@ -2,7 +2,7 @@ package com.qzoneparser.bean;
 
 public class Reply {
 	String content;
-	String uin;
+	Long uin;
 	String time;
 	String nick;
 	public String getContent() {
@@ -11,10 +11,10 @@ public class Reply {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public String getUin() {
+	public Long getUin() {
 		return uin;
 	}
-	public void setUin(String uin) {
+	public void setUin(Long uin) {
 		this.uin = uin;
 	}
 	public String getTime() {
